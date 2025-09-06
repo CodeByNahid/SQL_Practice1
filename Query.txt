@@ -1,0 +1,71 @@
+create database practice;
+
+create table Worker(
+WORKER_ID INT PRIMARY KEY,
+FIRST_NAME VARCHAR(24),
+LAST_NAME VARCHAR(24),
+SALARY INT,
+JOINING_DATE DATE,
+DEPARTMENT VARCHAR(20)
+);
+
+insert into Worker values
+(1,'Rana','Hamid',100000,'2014-02-20','HR'),
+(2,'Sanjoy','Saha',80000,'2014-06-11','Admin'),
+(3,'Mahamudul','Hasan',300000,'2014-02-20','HR'),
+(4,'Asad','Zaman',500000,'2014-02-20','Admin'),
+(5,'Sajib','Mia',500000,'2014-06-11','Admin'),
+(6,'Alamgir','Kabir',200000,'2014-06-11','Account'),
+(7,'Foridul','Islam',75000,'2014-01-20','Account'),
+(8,'Keshob','Ray',90000,'2014-04-11','Admin');
+
+SELECT * FROM Worker;
+
+--1. Write an SQL query to print first three characters of FIRST_NAME from Worker table.--
+select left(Worker.FIRST_NAME,3) as First_Three_Char from Worker;
+
+--2. Write an SQL query to print details of the Workers who have joined from Feb 2014 to March 2014.--
+select *from Worker where JOINING_DATE between '2014-02-01' and '2014-03-31';
+
+--3. Write an SQL query to print details of the Workers who have served for at least 6 months.--
+select *from Worker where DATEDIFF(month,JOINING_DATE,GETDATE())>=6;
+
+select *from Worker where DATEDIFF(month,JOINING_DATE,'2014-07-01')>=6;
+
+--4. Write an SQL query to update all worker bonus 10% whose joining_date before ‘2014-04-11’ otherwise bonus update 5% and also check department name is ‘Admin’.--
+UPDATE Worker
+SET SALARY = CASE 
+                WHEN JOINING_DATE <= '2014-04-11' AND DEPARTMENT='Admin'
+                     THEN SALARY * 1.10 
+                ELSE SALARY * 1.05   
+             END;
+--5. Write an SQL query to print details for Workers with the first name “Rana” and “Sajib” from Worker table.
+select *from Worker where FIRST_NAME in ('Rana','Sajib');
+
+--6. Write an SQL query to print details of workers excluding first names, “Rana” and “Sajib” from Worker table.
+select *from Worker where FIRST_NAME not in ('Rana','Sajib');
+
+--7. Write an SQL query to print details of the Workers whose FIRST_NAME contains ‘a’.
+select *from Worker where FIRST_NAME like'%a%';
+
+--8. Write an SQL query to print details of the Workers whose FIRST_NAME starts with ‘k’.
+select *from Worker where FIRST_NAME like'k%';
+
+--9. Write an SQL query to print details of the Workers whose FIRST_NAME ends with ‘r’ 
+select *from Worker where FIRST_NAME like'%r';
+
+--10. Write an SQL query to find the position of the alphabet (‘n’) in the FIRST_NAME column ‘Sanjoy’ from Worker table.
+select CHARINDEX('n',FIRST_NAME) from Worker where FIRST_NAME ='Sanjoy';
+
+--11. Find the average salary of employees for each department.
+select  DEPARTMENT, avg(SALARY) as Avg_Salary from Worker group by DEPARTMENT;
+
+--12. List all the employees who have maximum or minimum salary in each department.
+select Worker.* from (select DEPARTMENT, max(SALARY) as Max_Salary, min(SALARY) as Min_Salary from Worker group by DEPARTMENT) temp 
+join Worker on temp.DEPARTMENT=Worker.DEPARTMENT where Worker.SALARY=temp.Max_Salary or  Worker.SALARY=temp.Min_Salary order by Worker.WORKER_ID asc;
+
+--13. Write an SQL query that fetches the unique values of FIRST_NAME from Worker table and prints its length.
+select REPLACE(FIRST_NAME,'a','A') as Update_Name,len(FIRST_NAME) as Name_Length  from Worker;
+
+--14. Write an SQL query to print the FIRST_NAME from Worker table after replacing ‘a’ with ‘A’.
+select REPLACE(FIRST_NAME,'a','A') as Update_Name from Worker;
